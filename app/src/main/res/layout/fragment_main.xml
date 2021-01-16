@@ -27,26 +27,42 @@
         android:id="@+id/timeText"
         android:layout_width="198dp"
         android:layout_height="130dp"
-        android:layout_marginTop="136dp"
-        android:gravity="fill"
+        android:layout_marginTop="140dp"
+        android:gravity="center_horizontal|center_vertical"
         android:text="25:00"
         android:textSize="30pt"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.563"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button"
-        android:layout_width="160dp"
-        android:layout_height="58dp"
-        android:layout_marginTop="452dp"
+        android:layout_width="122dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="588dp"
         android:background="#2196F3"
         android:backgroundTint="#2196F3"
         android:text="Skip"
         android:textAllCaps="false"
         android:textSize="12pt"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="220dp"
+        android:layout_height="145dp"
+        android:layout_marginTop="420dp"
+        android:background="#2196F3"
+        android:backgroundTint="#2196F3"
+        android:text="Start"
+        android:textAllCaps="false"
+        android:textSize="12pt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.56"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -12,8 +12,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.sexypomo.R
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_main.*
+import android.os.CountDownTimer
+import android.widget.Button
+
+enum class TimerState {
+    WAIT_USER, COUNTING, PAUSED
+}
+
+enum class PomoPhase {
+    FOCUS, SHORT_BREAK, LONG_BREAK
+}
 
 /**
  * A placeholder fragment containing a simple view.
@@ -22,8 +31,10 @@ class PlaceholderFragment : Fragment() {
 
     private lateinit var pageViewModel: PageViewModel
     lateinit var mainHandler: Handler
-    var counter: Int = 0
-    var togglePause: Boolean = true
+    var counter: Int = 3
+    var timerState: TimerState = TimerState.WAIT_USER
+    var pomoPhase: PomoPhase = PomoPhase.FOCUS
+    var pomoSoFar: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,40 +49,75 @@ class PlaceholderFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_main, container, false)
-        //val textView: TextView = root.findViewById(R.id.textView)
-        val timeText = root.findViewById<TextView>(R.id.timeText)
-        timeText.setOnClickListener { togglePause() }
-        pageViewModel.text.observe(this, Observer<String> {
-            //textView.text = it
-        })
+        val timerControlButton: Button = root.findViewById(R.id.button2)
+        timerControlButton.setOnClickListener {
+            when(timerState) {
+                TimerState.WAIT_USER -> {
+                    timerState = TimerState.COUNTING
+                    button2.text = "Pause"
+                    mainHandler.post(updateTextTask)
+                }
+                TimerState.COUNTING -> {
+                    timerState = TimerState.PAUSED
+                    button2.text = "Resume"
+                    mainHandler.removeCallbacks(updateTextTask)
+                }
+                TimerState.PAUSED -> {
+                    timerState = TimerState.COUNTING
+                    button2.text = "Pause"
+                    mainHandler.post(updateTextTask)
+                }
+            }
+        }
 
         mainHandler = Handler(Looper.getMainLooper())
-        mainHandler.post(updateTextTask)
         return root
     }
 
     private val updateTextTask = object : Runnable {
         override fun run() {
-            //minusOneSecond()
-            timeText.text = "" + counter
-            counter += 1
-            mainHandler.postDelayed(this, 1000)
+            timeText.text = counterToTimeFormat(counter)
+            when(pomoPhase) {
+                PomoPhase.FOCUS -> progressBar.progress = 100 * counter / 3
+                PomoPhase.SHORT_BREAK -> progressBar.progress = 100 * counter / 5
+                PomoPhase.LONG_BREAK -> progressBar.progress = 100 * counter / 10
+            }
+
+            if(counter == 0) {
+                timerState = TimerState.WAIT_USER
+                button2.text = "Start"
+                when(pomoPhase) {
+                    PomoPhase.FOCUS -> {
+                        pomoSoFar++
+                        if(pomoSoFar == 4) {
+                            pomoPhase = PomoPhase.LONG_BREAK
+
+                            counter = 10
+                        } else {
+                            pomoPhase = PomoPhase.SHORT_BREAK
+                            counter = 5
+                        }
+                    }
+                    PomoPhase.SHORT_BREAK -> {
+                        pomoPhase = PomoPhase.FOCUS
+
+                        counter = 3
+                    }
+                    PomoPhase.LONG_BREAK -> {
+                        pomoPhase = PomoPhase.FOCUS
+                        counter = 3
+                        pomoSoFar = 0
+                    }
+                }
+            } else {
+                counter -= 1
+                mainHandler.postDelayed(this, 1000)
+            }
         }
     }
 
-    private fun togglePause() {
-
-        if(togglePause) {
-            mainHandler.removeCallbacks(updateTextTask)
-            timeText.setTextColor(Color.parseColor("#ff0000"))
-        }
-        else {
-            mainHandler.post(updateTextTask)
-            timeText.setTextColor(Color.parseColor("#0000ff"))
-        }
-        togglePause = !togglePause
-        //Snackbar.make(timeText, "Replace with your own action", Snackbar.LENGTH_LONG)
-        //    .setAction("Action", null).show()
+    fun counterToTimeFormat(x: Int): String {
+        return "" + x/60 + ":" + x%60
     }
 
     companion object {
