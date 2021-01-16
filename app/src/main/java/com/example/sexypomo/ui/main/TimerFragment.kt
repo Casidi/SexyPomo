@@ -1,21 +1,16 @@
 package com.example.sexypomo.ui.main
 
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.ColorFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.sexypomo.R
-import kotlinx.android.synthetic.main.fragment_main.*
-import android.os.CountDownTimer
+import kotlinx.android.synthetic.main.fragment_timer.*
 import android.widget.Button
 
 enum class TimerState {
@@ -29,7 +24,7 @@ enum class PomoPhase {
 /**
  * A placeholder fragment containing a simple view.
  */
-class PlaceholderFragment : Fragment() {
+class TimerFragment : Fragment() {
 
     private lateinit var pageViewModel: PageViewModel
     lateinit var mainHandler: Handler
@@ -50,7 +45,7 @@ class PlaceholderFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_main, container, false)
+        val root = inflater.inflate(R.layout.fragment_timer, container, false)
         val timerControlButton: Button = root.findViewById(R.id.button2)
         timerControlButton.setOnClickListener {
             when(timerState) {
@@ -140,9 +135,9 @@ class PlaceholderFragment : Fragment() {
          * number.
          */
         @JvmStatic
-        fun newInstance(sectionNumber: Int): PlaceholderFragment {
+        fun newInstance(sectionNumber: Int): TimerFragment {
 
-            return PlaceholderFragment().apply {
+            return TimerFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_SECTION_NUMBER, sectionNumber)
                 }

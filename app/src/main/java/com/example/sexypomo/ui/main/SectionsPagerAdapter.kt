@@ -7,8 +7,9 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.example.sexypomo.R
 
 private val TAB_TITLES = arrayOf(
-        R.string.tab_text_1,
-        R.string.tab_text_2
+        R.string.tab_text_timer,
+        R.string.tab_text_task,
+        R.string.tab_text_stat
 )
 
 /**
@@ -22,9 +23,10 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager)
         // getItem is called to instantiate the fragment for the given page.
         // Return a PlaceholderFragment (defined as a static inner class below).
         return when(position) {
-            0 -> StatisticFragment.newInstance("set", "test")
-            1 -> PlaceholderFragment.newInstance(position + 1)
-            else -> PlaceholderFragment.newInstance(position + 1)
+            0 -> TimerFragment.newInstance(position + 1)
+            1 -> TaskFragment.newInstance("set", "test")
+            2 -> StatisticFragment.newInstance("set", "test")
+            else -> TimerFragment.newInstance(position + 1)
         }
     }
 
@@ -34,6 +36,6 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager)
 
     override fun getCount(): Int {
         // Show 2 total pages.
-        return 2
+        return 3
     }
 }
