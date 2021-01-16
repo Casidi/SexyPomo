@@ -1,6 +1,8 @@
 package com.example.sexypomo.ui.main
 
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.ColorFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -76,6 +78,8 @@ class PlaceholderFragment : Fragment() {
 
     private val updateTextTask = object : Runnable {
         override fun run() {
+
+
             timeText.text = counterToTimeFormat(counter)
             when(pomoPhase) {
                 PomoPhase.FOCUS -> progressBar.progress = 100 * counter / 3
@@ -86,29 +90,33 @@ class PlaceholderFragment : Fragment() {
             if(counter == 0) {
                 timerState = TimerState.WAIT_USER
                 button2.text = "Start"
+                progressBar.progress = 100
                 when(pomoPhase) {
                     PomoPhase.FOCUS -> {
                         pomoSoFar++
                         if(pomoSoFar == 4) {
                             pomoPhase = PomoPhase.LONG_BREAK
-
                             counter = 10
+                            progressBar.progressTintList = ColorStateList.valueOf(0xFF437ea8.toInt())
                         } else {
                             pomoPhase = PomoPhase.SHORT_BREAK
                             counter = 5
+                            progressBar.progressTintList = ColorStateList.valueOf(0xFF468e91.toInt())
                         }
                     }
                     PomoPhase.SHORT_BREAK -> {
                         pomoPhase = PomoPhase.FOCUS
-
                         counter = 3
+                        progressBar.progressTintList = ColorStateList.valueOf(0xFFDB524D.toInt())
                     }
                     PomoPhase.LONG_BREAK -> {
                         pomoPhase = PomoPhase.FOCUS
                         counter = 3
                         pomoSoFar = 0
+                        progressBar.progressTintList = ColorStateList.valueOf(0xFFDB524D.toInt())
                     }
                 }
+                timeText.text = counterToTimeFormat(counter)
             } else {
                 counter -= 1
                 mainHandler.postDelayed(this, 1000)
