@@ -1,76 +1,68 @@
 package com.example.sexypomo.ui.main
 
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.ShapeDrawable
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import com.example.sexypomo.R
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.add_task_dialog.*
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TaskFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TaskFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    val memberList: MutableList<Member> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val root = inflater.inflate(R.layout.fragment_task, container, false)
+
         val recyclerView = root.findViewById(R.id.recyclerView) as RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val memberList: MutableList<Member> = ArrayList()
-        memberList.add(Member(1, R.drawable.bike, "白沙屯海灘1"))
-        memberList.add(Member(2, R.drawable.pencil, "白沙屯海灘2"))
-        memberList.add(Member(3, android.R.drawable.ic_dialog_email, "白沙屯海灘3"))
-        memberList.add(Member(4, android.R.drawable.ic_dialog_email, "白沙屯海灘4"))
-        memberList.add(Member(5, android.R.drawable.ic_dialog_email, "白沙屯海灘5"))
-        memberList.add(Member(6, android.R.drawable.ic_dialog_email, "白沙屯3"))
-        memberList.add(Member(7, android.R.drawable.ic_dialog_email, "後龍1"))
-        memberList.add(Member(8, android.R.drawable.ic_dialog_email, "後龍2"))
-        recyclerView.adapter = this.context?.let { MemberAdapter(it, memberList) }
-        return root
-    }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-                TaskFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
+        memberList.add(Member(R.drawable.bike, "Exercise"))
+        memberList.add(Member(R.drawable.pencil, "Work"))
+        recyclerView.adapter = this.context?.let { MemberAdapter(it, memberList) }
+
+        val addTaskButton = root.findViewById(R.id.fabAddTask) as FloatingActionButton
+        addTaskButton.setOnClickListener {
+            val builder = context?.let { it1 -> AlertDialog.Builder(it1) }
+
+            val inflater = requireActivity().layoutInflater;
+            val dialogView = inflater.inflate(R.layout.add_task_dialog, null)
+            builder?.apply {
+                setView(dialogView)
+                setTitle("New task")
+                setPositiveButton("Add", DialogInterface.OnClickListener { dialog, which ->
+                    val editText = dialogView.findViewById<EditText>(R.id.newTaskName)
+                    if(editText.text.isEmpty()) {
+                        val toast = Toast(context)
+                        toast.setText("Task name shouldn't be empty.")
+                        toast.duration = Toast.LENGTH_SHORT
+                        toast.show()
+                    } else {
+                        memberList.add(Member(R.drawable.pencil, editText.text.toString()))
+                        //recyclerView.adapter?.notifyItemInserted(memberList.size - 1)
                     }
-                }
+                })
+            }
+            val dialog: AlertDialog? = builder?.create()
+            dialog?.show()
+        }
+        return root
     }
 }
 
@@ -109,15 +101,9 @@ private class MemberAdapter internal constructor(
             gradientDrawable.setColor(0xffdd0000.toInt())
         }
 
-        holder.textId.setText(java.lang.String.valueOf(member.id))
         holder.textName.setText(member.name)
         holder.itemView.setOnClickListener {
-            val imageView = ImageView(context)
-            imageView.setImageResource(member.image)
-            val toast = Toast(context)
-            toast.setView(imageView)
-            toast.duration = Toast.LENGTH_SHORT
-            toast.show()
+            //TODO: set current task and switch to timer tab
         }
     }
 
@@ -129,12 +115,10 @@ private class MemberAdapter internal constructor(
     internal inner class ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var imageId: ImageView
-        var textId: TextView
         var textName: TextView
 
         init {
             imageId = itemView.findViewById<View>(R.id.imageId) as ImageView
-            textId = itemView.findViewById<View>(R.id.textId) as TextView
             textName = itemView.findViewById<View>(R.id.textName) as TextView
         }
     }
@@ -146,13 +130,10 @@ private class MemberAdapter internal constructor(
 }
 
 class Member {
-    var id = 0
     var image = 0
     var name: String? = null
 
-    constructor() : super() {}
-    constructor(id: Int, image: Int, name: String?) : super() {
-        this.id = id
+    constructor(image: Int, name: String?) : super() {
         this.image = image
         this.name = name
     }
